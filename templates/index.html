@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revolut Trading Assistant</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">📈</span>
+                <span class="logo-text">TradeAssist</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-page="dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span>Dashboard</span>
+                </li>
+                <li class="nav-item" data-page="signals">
+                    <span class="nav-icon">🎯</span>
+                    <span>Trading Signals</span>
+                </li>
+                <li class="nav-item" data-page="screener">
+                    <span class="nav-icon">🔍</span>
+                    <span>Asset Screener</span>
+                </li>
+                <li class="nav-item" data-page="cryptos">
+                    <span class="nav-icon">🪙</span>
+                    <span>Cryptocurrencies</span>
+                </li>
+                <li class="nav-item" data-page="stocks">
+                    <span class="nav-icon">📊</span>
+                    <span>Stocks</span>
+                </li>
+                <li class="nav-item" data-page="portfolio">
+                    <span class="nav-icon">💼</span>
+                    <span>My Portfolio</span>
+                </li>
+                <li class="nav-item" data-page="watchlist">
+                    <span class="nav-icon">⭐</span>
+                    <span>Watchlist</span>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <p>Revolut Compatible</p>
+                <small>Real-time analysis</small>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 id="page-title">Dashboard</h1>
+                    <p id="page-subtitle">Overview of your trading opportunities</p>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="Search symbol (e.g., BTC, AAPL)">
+                        <button id="search-btn">Search</button>
+                    </div>
+                    <div class="refresh-btn" id="refresh-btn" title="Refresh data">🔄</div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Dashboard Page -->
+                <div id="dashboard-page" class="page active">
+                    <!-- Market Overview -->
+                    <section class="section">
+                        <h2 class="section-title">Market Overview</h2>
+                        <div class="market-cards" id="market-overview">
+                            <div class="loading">Loading market data...</div>
+                        </div>
+                    </section>
+
+                    <!-- Quick Signals -->
+                    <section class="section">
+                        <h2 class="section-title">🔥 Top Trading Opportunities</h2>
+                        <p class="section-desc">Assets with the strongest buy signals based on technical analysis</p>
+                        <div class="signals-grid" id="quick-signals">
+                            <div class="loading">Analyzing assets...</div>
+                        </div>
+                    </section>
+
+                    <!-- What to Buy/Sell Summary -->
+                    <section class="section summary-section">
+                        <div class="summary-card buy-summary">
+                            <h3>💚 Consider Buying</h3>
+                            <div id="buy-suggestions">
+                                <div class="loading">Analyzing...</div>
+                            </div>
+                        </div>
+                        <div class="summary-card sell-summary">
+                            <h3>🔴 Consider Selling</h3>
+                            <div id="sell-suggestions">
+                                <div class="loading">Analyzing...</div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Signals Page -->
+                <div id="signals-page" class="page">
+                    <section class="section">
+                        <h2 class="section-title">All Trading Signals</h2>
+                        <p class="section-desc">Comprehensive buy/sell recommendations for Revolut assets</p>
+                        <div class="filter-bar">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="buy">Buy Signals</button>
+                            <button class="filter-btn" data-filter="sell">Sell Signals</button>
+                            <button class="filter-btn" data-filter="crypto">Crypto Only</button>
+                            <button class="filter-btn" data-filter="stock">Stocks Only</button>
+                        </div>
+                        <div class="signals-table-container">
+                            <table class="signals-table" id="signals-table">
+                                <thead>
+                                    <tr>
+                                        <th>Asset</th>
+                                        <th>Type</th>
+                                        <th>Price</th>
+                                        <th>24h Change</th>
+                                        <th>RSI</th>
+                                        <th>Signal</th>
+                                        <th>Score</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="signals-tbody">
+                                    <tr><td colspan="8" class="loading">Loading signals...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Screener Page -->
+                <div id="screener-page" class="page">
+                    <section class="section">
+                        <h2 class="section-title">Asset Screener</h2>
+                        <p class="section-desc">Find assets matching specific criteria</p>
+                        <div class="screener-controls">
+                            <button class="screener-btn" data-criteria="oversold">
+                                <span class="btn-icon">📉</span>
+                                <span class="btn-text">Oversold (RSI &lt; 30)</span>
+                                <span class="btn-hint">Potential bounce</span>
+                            </button>
+                            <button class="screener-btn" data-criteria="overbought">
+                                <span class="btn-icon">📈</span>
+                                <span class="btn-text">Overbought (RSI &gt; 70)</span>
+                                <span class="btn-hint">Potential pullback</span>
+                            </button>
+                            <button class="screener-btn" data-criteria="buy_signals">
+                                <span class="btn-icon">💚</span>
+                                <span class="btn-text">Strong Buy Signals</span>
+                                <span class="btn-hint">Multiple indicators bullish</span>
+                            </button>
+                            <button class="screener-btn" data-criteria="sell_signals">
+                                <span class="btn-icon">🔴</span>
+                                <span class="btn-text">Strong Sell Signals</span>
+                                <span class="btn-hint">Multiple indicators bearish</span>
+                            </button>
+                        </div>
+                        <div class="screener-results" id="screener-results">
+                            <p class="placeholder-text">Select a criteria above to screen assets</p>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Cryptos Page -->
+                <div id="cryptos-page" class="page">
+                    <section class="section">
+                        <h2 class="section-title">Revolut Cryptocurrencies</h2>
+                        <p class="section-desc">All cryptocurrencies available on Revolut with real-time prices</p>
+                        <div class="asset-grid" id="crypto-grid">
+                            <div class="loading">Loading cryptocurrencies...</div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Stocks Page -->
+                <div id="stocks-page" class="page">
+                    <section class="section">
+                        <h2 class="section-title">Revolut Stocks</h2>
+                        <p class="section-desc">Popular stocks available on Revolut</p>
+                        <div class="sector-filter" id="sector-filter">
+                            <button class="sector-btn active" data-sector="all">All</button>
+                        </div>
+                        <div class="asset-grid" id="stock-grid">
+                            <div class="loading">Loading stocks...</div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Portfolio Page -->
+                <div id="portfolio-page" class="page">
+                    <section class="section">
+                        <h2 class="section-title">My Portfolio</h2>
+                        <div class="portfolio-summary" id="portfolio-summary">
+                            <div class="summary-stat">
+                                <span class="stat-label">Total Value</span>
+                                <span class="stat-value" id="total-value">$0.00</span>
+                            </div>
+                            <div class="summary-stat">
+                                <span class="stat-label">Total P&L</span>
+                                <span class="stat-value" id="total-pnl">$0.00</span>
+                            </div>
+                            <div class="summary-stat">
+                                <span class="stat-label">P&L %</span>
+                                <span class="stat-value" id="total-pnl-percent">0.00%</span>
+                            </div>
+                        </div>
+                        <div class="add-holding">
+                            <h3>Add Holding</h3>
+                            <form id="add-holding-form">
+                                <input type="text" id="holding-symbol" placeholder="Symbol (e.g., BTC)" required>
+                                <select id="holding-type">
+                                    <option value="crypto">Crypto</option>
+                                    <option value="stock">Stock</option>
+                                </select>
+                                <input type="number" id="holding-quantity" placeholder="Quantity" step="any" required>
+                                <input type="number" id="holding-price" placeholder="Buy Price" step="any" required>
+                                <button type="submit">Add</button>
+                            </form>
+                        </div>
+                        <div class="portfolio-holdings" id="portfolio-holdings">
+                            <p class="placeholder-text">No holdings yet. Add your first position above!</p>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Watchlist Page -->
+                <div id="watchlist-page" class="page">
+                    <section class="section">
+                        <h2 class="section-title">My Watchlist</h2>
+                        <div class="add-watchlist">
+                            <form id="add-watchlist-form">
+                                <input type="text" id="watchlist-symbol" placeholder="Symbol (e.g., AAPL)" required>
+                                <select id="watchlist-type">
+                                    <option value="stock">Stock</option>
+                                    <option value="crypto">Crypto</option>
+                                </select>
+                                <button type="submit">Add to Watchlist</button>
+                            </form>
+                        </div>
+                        <div class="watchlist-items" id="watchlist-items">
+                            <p class="placeholder-text">Your watchlist is empty. Add assets to track!</p>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Asset Detail Modal -->
+                <div id="asset-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="modal-close">&times;</span>
+                        <div id="modal-body">
+                            <div class="loading">Loading analysis...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
