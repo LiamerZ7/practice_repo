@@ -96,7 +96,7 @@ def fetch_crypto_prices() -> dict:
         url = f"{API_SETTINGS['coingecko_base_url']}/simple/price"
         params = {
             "ids": ids,
-            "vs_currencies": "usd",
+            "vs_currencies": "eur",
             "include_24hr_vol": "true",
             "include_24hr_change": "true",
             "include_market_cap": "true",
@@ -113,10 +113,10 @@ def fetch_crypto_prices() -> dict:
                 result[crypto["symbol"]] = {
                     "symbol": crypto["symbol"],
                     "name": crypto["name"],
-                    "price": data[cg_id].get("usd", 0),
-                    "change_24h": data[cg_id].get("usd_24h_change", 0),
-                    "volume_24h": data[cg_id].get("usd_24h_vol", 0),
-                    "market_cap": data[cg_id].get("usd_market_cap", 0),
+                    "price": data[cg_id].get("eur", 0),
+                    "change_24h": data[cg_id].get("eur_24h_change", 0),
+                    "volume_24h": data[cg_id].get("eur_24h_vol", 0),
+                    "market_cap": data[cg_id].get("eur_market_cap", 0),
                 }
 
         set_cache(cache_key, result)
@@ -135,7 +135,7 @@ def fetch_crypto_history(coingecko_id: str, days: int = 90) -> pd.DataFrame:
 
     try:
         url = f"{API_SETTINGS['coingecko_base_url']}/coins/{coingecko_id}/market_chart"
-        params = {"vs_currency": "usd", "days": days}
+        params = {"vs_currency": "eur", "days": days}
 
         response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()

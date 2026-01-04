@@ -346,8 +346,8 @@ HTML_TEMPLATE = """
         const API = '';
 
         function formatPrice(p) {
-            if (p >= 1) return '$' + p.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            return '$' + p.toFixed(6);
+            if (p >= 1) return p.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+            return p.toFixed(6) + ' €';
         }
 
         function formatChange(c) { return (c >= 0 ? '+' : '') + c.toFixed(2) + '%'; }
