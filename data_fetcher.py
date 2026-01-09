@@ -5,7 +5,12 @@ Fetches real-time and historical data for stocks and cryptocurrencies
 
 import time
 import requests
-import yfinance as yf
+try:
+    import yfinance as yf
+    YFINANCE_AVAILABLE = True
+except ImportError:
+    YFINANCE_AVAILABLE = False
+    yf = None
 import pandas as pd
 from datetime import datetime, timedelta
 from config import REVOLUT_CRYPTOS, REVOLUT_STOCKS, API_SETTINGS
@@ -36,6 +41,10 @@ def fetch_stock_data(symbol: str, period: str = "3mo", interval: str = "1d") -> 
     Fetch stock data from Yahoo Finance
     Returns DataFrame with OHLCV data
     """
+    if not YFINANCE_AVAILABLE:
+        print("yfinance not available - stock data unavailable")
+        return pd.DataFrame()
+
     cache_key = f"stock_{symbol}_{period}_{interval}"
     cached = get_cached(cache_key, timeout=300)  # 5 min cache for historical data
     if cached is not None:
@@ -54,6 +63,9 @@ def fetch_stock_data(symbol: str, period: str = "3mo", interval: str = "1d") -> 
 
 def fetch_stock_info(symbol: str) -> dict:
     """Fetch current stock info and quote"""
+    if not YFINANCE_AVAILABLE:
+        return {"symbol": symbol, "error": "yfinance not available"}
+
     cache_key = f"stock_info_{symbol}"
     cached = get_cached(cache_key, timeout=60)
     if cached is not None:
@@ -189,6 +201,9 @@ def get_stock_by_symbol(symbol: str) -> dict:
 
 def fetch_market_overview() -> dict:
     """Fetch overall market indicators"""
+    if not YFINANCE_AVAILABLE:
+        return {}
+
     try:
         # Major indices
         indices = {
