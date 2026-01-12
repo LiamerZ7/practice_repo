@@ -14,9 +14,9 @@ const CACHE_DURATION = 30000; // 30 seconds
 
 function formatPrice(price, decimals = 2) {
     if (price >= 1) {
-        return '$' + price.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+        return price.toLocaleString('de-DE', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + ' €';
     }
-    return '$' + price.toFixed(6);
+    return price.toFixed(6) + ' €';
 }
 
 function formatChange(change) {

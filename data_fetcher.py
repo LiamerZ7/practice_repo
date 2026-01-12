@@ -5,7 +5,12 @@ Fetches real-time and historical data for stocks and cryptocurrencies
 
 import time
 import requests
-import yfinance as yf
+try:
+    import yfinance as yf
+    YFINANCE_AVAILABLE = True
+except ImportError:
+    YFINANCE_AVAILABLE = False
+    yf = None
 import pandas as pd
 from datetime import datetime, timedelta
 from config import REVOLUT_CRYPTOS, REVOLUT_STOCKS, API_SETTINGS
@@ -36,6 +41,10 @@ def fetch_stock_data(symbol: str, period: str = "3mo", interval: str = "1d") -> 
     Fetch stock data from Yahoo Finance
     Returns DataFrame with OHLCV data
     """
+    if not YFINANCE_AVAILABLE:
+        print("yfinance not available - stock data unavailable")
+        return pd.DataFrame()
+
     cache_key = f"stock_{symbol}_{period}_{interval}"
     cached = get_cached(cache_key, timeout=300)  # 5 min cache for historical data
     if cached is not None:
@@ -54,6 +63,9 @@ def fetch_stock_data(symbol: str, period: str = "3mo", interval: str = "1d") -> 
 
 def fetch_stock_info(symbol: str) -> dict:
     """Fetch current stock info and quote"""
+    if not YFINANCE_AVAILABLE:
+        return {"symbol": symbol, "error": "yfinance not available"}
+
     cache_key = f"stock_info_{symbol}"
     cached = get_cached(cache_key, timeout=60)
     if cached is not None:
@@ -96,7 +108,7 @@ def fetch_crypto_prices() -> dict:
         url = f"{API_SETTINGS['coingecko_base_url']}/simple/price"
         params = {
             "ids": ids,
-            "vs_currencies": "usd",
+            "vs_currencies": "eur",
             "include_24hr_vol": "true",
             "include_24hr_change": "true",
             "include_market_cap": "true",
@@ -113,10 +125,10 @@ def fetch_crypto_prices() -> dict:
                 result[crypto["symbol"]] = {
                     "symbol": crypto["symbol"],
                     "name": crypto["name"],
-                    "price": data[cg_id].get("usd", 0),
-                    "change_24h": data[cg_id].get("usd_24h_change", 0),
-                    "volume_24h": data[cg_id].get("usd_24h_vol", 0),
-                    "market_cap": data[cg_id].get("usd_market_cap", 0),
+                    "price": data[cg_id].get("eur", 0),
+                    "change_24h": data[cg_id].get("eur_24h_change", 0),
+                    "volume_24h": data[cg_id].get("eur_24h_vol", 0),
+                    "market_cap": data[cg_id].get("eur_market_cap", 0),
                 }
 
         set_cache(cache_key, result)
@@ -135,7 +147,7 @@ def fetch_crypto_history(coingecko_id: str, days: int = 90) -> pd.DataFrame:
 
     try:
         url = f"{API_SETTINGS['coingecko_base_url']}/coins/{coingecko_id}/market_chart"
-        params = {"vs_currency": "usd", "days": days}
+        params = {"vs_currency": "eur", "days": days}
 
         response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()
@@ -189,6 +201,9 @@ def get_stock_by_symbol(symbol: str) -> dict:
 
 def fetch_market_overview() -> dict:
     """Fetch overall market indicators"""
+    if not YFINANCE_AVAILABLE:
+        return {}
+
     try:
         # Major indices
         indices = {
